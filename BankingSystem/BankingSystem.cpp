@@ -1,4 +1,6 @@
 ﻿//Projekt nr 68
+//Autor: Kacper Bujak
+
 #include <iostream>
 #include "Menu.h"
 using namespace std;
