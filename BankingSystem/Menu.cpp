@@ -3,19 +3,23 @@
 #include <vector>
 #include "User.h"
 #include "AdminAccount.h"
+#include "Save_Load.h"
 using namespace std;
 
 Menu::Menu(string username, string password)  
 {
 	m_admin.Set_username(username);
 	m_admin.Set_password(password);
-	running = true;
+	Users = Save_Load::Load();
 }
 
 void Menu::Login()
 {
-		int choice = {};
-		cout << "Witaj w systemie naszego banku!" << endl;
+	bool running = true;
+	while (running)
+	{
+		char choice = {};
+		cout << "\nWitaj w systemie naszego banku!" << endl;
 		cout << "Dostepne opcje:" << endl;
 		cout << "1.Zaloguj sie na konto uzytkownika" << endl;
 		cout << "2.Zaloguj sie na konto administratora" << endl;
@@ -24,7 +28,7 @@ void Menu::Login()
 
 		switch (choice)
 		{
-		case 1:
+		case '1':
 			if (UserLogin() == true)
 			{
 				Menu::ShowMenu();
@@ -32,10 +36,9 @@ void Menu::Login()
 			else
 			{
 				cout << "Podane dane sa nieprawidlowe!" << endl;
-				Menu::Login();
 			}
 			break;
-		case 2:
+		case '2':
 			if (AdminLogin() == true)
 			{
 				Menu::ShowAdminMenu();
@@ -43,17 +46,109 @@ void Menu::Login()
 			else
 			{
 				cout << "Podane dane sa nieprawidlowe!" << endl;
-				Menu::Login();
 			}
 			break;
-		case 3:
+		case '3':
 			cout << "Wychodzenie z systemu..." << endl;
+			Save_Load::Save(Users);
+			running = false;
 			break;
 		default:
 			cout << "Wybor nieprawidlowy!" << endl;
-			Menu::Login();
 			break;
 		}
+	}
+}
+
+void Menu::ShowMenu()
+{
+	bool run = true;
+	while (run)
+	{
+		char choice = {};
+		cout << "\nWitaj w panelu uzytkownika!" << endl;
+		cout << "            MENU               " << endl;
+		cout << "1. Wplac srodki na konto" << endl;
+		cout << "2. Wyplac srodki z konta" << endl;
+		cout << "3. Przelej srodki na inne konto" << endl;
+		cout << "4. Sprawdz stan konta" << endl;
+		cout << "5. Wyloguj sie" << endl;
+		cout << "Wybierz interesujaca Cie opcje: ";
+		cin >> choice;
+
+		for (auto& user : Users)
+		{
+			if (user.Get_username() == current_user_username && user.Get_password() == current_user_password)
+			{
+				switch (choice)
+				{
+				case '1':
+					user.Deposit();
+					break;
+				case '2':
+					user.Withdraw();
+					break;
+				case '3':
+					user.Transfer(Users);
+					break;
+				case '4':
+					cout << user.Get_amountOfMoney() << " zl" << endl;
+					break;
+				case '5':
+					cout << "Wychodzenie do panelu glownego...." << endl;
+
+					current_user_username = {};
+					current_user_password = {};
+					run = false;
+					break;
+				default:
+					cout << "Wybor nieprawidlowy! Sprobuj ponownie." << endl;
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Menu::ShowAdminMenu()
+{
+	bool run = true;
+	while (run)
+	{
+		char choice = {};
+		cout << "\n         ADMIN MENU               " << endl;
+		cout << "1. Dodaj uzytkownika" << endl;
+		cout << "2. Usun uzytkownika" << endl;
+		cout << "3. Modyfikuj dane uzytkownika" << endl;
+		cout << "4. Wyswietl informacje o uzytkownikach" << endl;
+		cout << "5. Wyjdz do menu glownego" << endl;
+		cout << "Wybierz interesujaca Cie opcje: ";
+		cin >> choice;
+
+		switch (choice)
+		{
+		case '1':
+			m_admin.Add_user(Users);
+			break;
+		case '2':
+			m_admin.Delete_user(Users);
+			break;
+		case '3':
+			m_admin.Modify_user(Users);
+			break;
+		case '4':
+			m_admin.Show_users_data(Users);
+			break;
+		case '5':
+			cout << "Wychodzenie do panelu glownego...." << endl;
+			run = false;
+			break;
+
+		default:
+			cout << "Wybor nieprawidlowy! Sprobuj ponownie." << endl;
+			break;
+		}
+	}
 }
 
 bool Menu::UserLogin()
@@ -65,7 +160,7 @@ bool Menu::UserLogin()
 	cout << "Podaj haslo: " << endl;
 	cin >> password;
 
-	for (User user : Users)
+	for (auto& user : Users)
 	{
 		if (user.Get_username() == username && user.Get_password() == password)
 		{
@@ -73,11 +168,8 @@ bool Menu::UserLogin()
 			current_user_password = password;
 			return true;
 		}
-		else
-		{
-			return false;
-		}
 	}
+	return false;
 }
 
 bool Menu::AdminLogin()
@@ -89,119 +181,12 @@ bool Menu::AdminLogin()
 	cout << "Podaj haslo: " << endl;
 	cin >> password;
 
-		if (m_admin.Get_username() == username && m_admin.Get_password() == password)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-}
-
-void Menu::ShowMenu()
-{
-		int choice = {};
-		cout << "Witaj w panelu uzytkownika!" << endl;
-		cout << "            MENU               " << endl;
-		cout << "1. Wplac srodki na konto" << endl;
-		cout << "2. Wyplac srodki z konta" << endl;
-		cout << "3. Przelej srodki na inne konto" << endl;
-		cout << "4. Sprawdz stan konta" << endl;
-		cout << "5. Wyloguj sie" << endl;
-		cout << "Wybierz interesujaca Cie opcje: ";
-		cin >> choice;
-
-
-		for (auto& user : Users)
-		{
-			switch (choice)
-			{
-			case 1:
-				user.Deposit();
-				break;
-			case 2:
-				user.Withdraw();
-				break;
-			case 3:
-
-				break;
-			case 4:
-				cout << user.Get_amountOfMoney() << " zl" << endl;
-				break;
-			case 5:
-				cout << "Wychodzenie do panelu glownego...." << endl;
-				break;
-			default:
-				cout << "Wybor nieprawidlowy! Sprobuj ponownie." << endl;
-				Menu::ShowMenu();
-				break;
-			}
-		}
-}
-
-void Menu::ShowAdminMenu()
-{
-	int choice = {};
-	cout << "         ADMIN MENU               " << endl;
-	cout << "1. Dodaj uzytkownika" << endl;
-	cout << "2. Usun uzytkownika" << endl;
-	cout << "3. Modyfikuj dane uzytkownika" << endl;
-	cout << "4. Wyjdz do menu glownego" << endl;
-	cout << "Wybierz interesujaca Cie opcje: ";
-	cin >> choice;
-
-	switch (choice)
+	if (m_admin.Get_username() == username && m_admin.Get_password() == password)
 	{
-	case 1:
-		Add_user();
-		break;
-	case 2:
-
-		break;
-	case 3:
-
-		break;
-	case 4:
-		cout << "Wychodzenie do panelu glownego...." << endl;
-		break;
-
-	default:
-		cout << "Wybor nieprawidlowy! Sprobuj ponownie." << endl;
-		Menu::ShowAdminMenu();
-		break;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
-
-
-void Menu::Add_user()
-{
-	string username, password;
-	float amoutOfMoney{};
-
-	cout << "Podaj login dla nowego uzytkownika: ";
-	cin >> username;
-	cout << "Podaj haslo dla nowego uzytkownika: ";
-	cin >> password;
-	cout << "Podaj poczatkowy stan konta: ";
-	cin >> amoutOfMoney;
-
-	Users.push_back(User(username, password, amoutOfMoney, Users.size() + 1));
-	cout << "Uzytkownik zostal dodany do systemu!" << endl;
-	ShowAdminMenu();
-
-}
-void Menu::Delete_user()
-{
-
-}
-void Menu::Modify_user_username()
-{
-
-}
-void Menu::Modify_user_password()
-{
-
-}
-
-
