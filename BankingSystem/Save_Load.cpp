@@ -1,41 +1,43 @@
+#pragma once
 #include "Save_Load.h"
-#include <string>
+using namespace std;
 
-vector<User> Save_Load::Load()
+template <typename T> vector<T> Save_Load<T>::Load(const string& fileName)
 {
-	vector<User> users;
-	ifstream plik("Uzytkownicy.txt");
+    vector<T> objects;
+    ifstream file(fileName + ".txt");
 
-	if (plik.is_open() == true)
-	{
-		User user;
-		while (plik >> user)
-		{
-			users.push_back(user);
-		}
-		plik.close();
-		return users;
-	}
-	else
-	{
-		cout << "Nie udalo sie otworzyc pliku!" << endl;
-	}
+    if (file.is_open())
+    {
+        T object{};
+        while (file >> object)
+        {
+            objects.push_back(object);
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "Nie udalo sie otworzyc pliku!" << std::endl;
+    }
+
+    return objects;
 }
 
-void Save_Load::Save(vector<User>& users)
+template <typename T> void Save_Load<T>::Save(const vector<T>& objects, const std::string& fileName)
 {
-	ofstream plik("Uzytkownicy.txt");
+    ofstream file(fileName + ".txt");
 
-	if (plik.is_open() == true)
-	{
-		for (auto& user : users)
-		{
-			plik << user << endl;
-		}
-		plik.close();
-	}
-	else
-	{
-		cout << "Nie udalo sie otworzyc pliku!" << endl;
-	}
+    if (file.is_open())
+    {
+        for (const auto& object : objects)
+        {
+            file << object << std::endl;
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "Nie udalo sie otworzyc pliku!" << std::endl;
+    }
 }

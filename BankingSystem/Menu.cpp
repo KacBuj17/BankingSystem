@@ -10,7 +10,7 @@ Menu::Menu(string username, string password)
 {
 	m_admin.Set_username(username);
 	m_admin.Set_password(password);
-	Users = Save_Load::Load();
+	Users = Save_Load<User>::Load("Uzytkownicy");
 }
 
 void Menu::Login()
@@ -50,7 +50,7 @@ void Menu::Login()
 			break;
 		case '3':
 			cout << "Wychodzenie z systemu..." << endl;
-			Save_Load::Save(Users);
+			Save_Load<User>::Save(Users, "Uzytkownicy");
 			running = false;
 			break;
 		default:

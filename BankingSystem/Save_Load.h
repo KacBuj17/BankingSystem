@@ -2,13 +2,14 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "User.h"
+
 using namespace std;
 
-class Save_Load
+template <typename T> class Save_Load
 {
 public:
-	static vector<User> Load();
-	static void Save(vector<User>& users);
+    static vector<T> Load(const std::string& fileName);
+    static void Save(const vector<T>& objects, const std::string& fileName);
 };
 
+#include "Save_Load.cpp"
