@@ -3,8 +3,6 @@
 
 AdminAccount::AdminAccount(string username, string password) : Account(username, password) {}
 
-
-
 void AdminAccount::Show_users_data(vector<User>& users)
 {
 	if (users.empty() == true)
@@ -67,7 +65,6 @@ void AdminAccount::Delete_user(vector<User>& users)
 		}
 	}
 }
-
 
 void AdminAccount::Modify_user(vector<User>& users)
 {
