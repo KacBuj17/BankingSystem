@@ -54,33 +54,44 @@ void User::Transfer(vector<User>& users)
 	int id = {};
 	int choice = {};
 	float amount = {};
+	
 	cout << "Lista uzytkownikow w systemie: " << endl;
 
 	for (auto& user : users)
 	{
-		cout << "Id: " << user.Get_id() << ", Username: " << user.Get_username() << endl;
+		if (user.Get_id() != m_id)
+		{
+			cout << "Id: " << user.Get_id() << ", Username: " << user.Get_username() << endl;
+		}
 	}
 
 	cout << "Podaj id uzytkownika, ktoremu chcesz przelac pieniadze: ";
 	cin >> choice;
 
-	cout << "Podaj ilosc pieniedzy jaka chcesz przelac: ";
-	cin >> amount;
-
-	for (auto& user : users)
+	if (choice == m_id)
 	{
-		if (user.Get_id() == choice)
+		cout << "Wybor niepoprawny!" << endl;
+	}
+	else
+	{
+		cout << "Podaj ilosc pieniedzy jaka chcesz przelac: ";
+		cin >> amount;
+
+		for (auto& user : users)
 		{
-			if (m_amountOfMoney >= amount)
+			if (user.Get_id() == choice)
 			{
-				user.Set_amount_of_money(user.Get_amountOfMoney() + amount);
-				m_amountOfMoney = m_amountOfMoney - amount;
-				break;
-			}
-			else
-			{
-				cout << "Nie masz wystarczajacej ilosci srodkow na koncie!" << endl;
-				break;
+				if (m_amountOfMoney >= amount)
+				{
+					user.Set_amount_of_money(user.Get_amountOfMoney() + amount);
+					m_amountOfMoney = m_amountOfMoney - amount;
+					break;
+				}
+				else
+				{
+					cout << "Nie masz wystarczajacej ilosci srodkow na koncie!" << endl;
+					break;
+				}
 			}
 		}
 	}

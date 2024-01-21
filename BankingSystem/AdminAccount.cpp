@@ -123,7 +123,7 @@ void AdminAccount::Modify_user_username(User& user)
 void AdminAccount::Modify_user_password(User& user)
 {
 	string password;
-	cout << "Podaj nowa nazwe uzytkownika: ";
+	cout << "Podaj nowe haslo uzytkownika: ";
 	cin >> password;
 
 	user.Set_password(password);
